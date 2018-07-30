@@ -18,7 +18,7 @@ if (!jinst.isJvmCreated()) {
 java.newInstance('Altibase.jdbc.driver.AltibaseDriver', function(err, driver) {});
 
 var config = {
-  url: 'jdbc:Altibase://mmj:20999/mydb',
+  url: 'jdbc:Altibase://testserver:20999/mydb',
   user : 'sys',
   password: 'manager',
   minpoolsize: 1,
@@ -26,7 +26,7 @@ var config = {
 };
 
 var configWithMaxIdle = {
-  url: 'jdbc:Altibase://mmj:20999/mydb',
+  url: 'jdbc:Altibase://testserver:20999/mydb',
   user : 'sys',
   password: 'manager',
   minpoolsize: 1,
@@ -35,7 +35,7 @@ var configWithMaxIdle = {
 };
 
 var configWithMaxIdleAndKeepAlive = {
-  url: 'jdbc:Altibase://mmj:20999/mydb',
+  url: 'jdbc:Altibase://testserver:20999/mydb',
   user : 'sys',
   password: 'manager',
   minpoolsize: 1,

@@ -12,7 +12,7 @@ if (!jinst.isJvmCreated()) {
 }
 
 var config = {
-  url: 'jdbc:Altibase://mmj:20999/mydb',
+  url: 'jdbc:Altibase://testserver:20999/mydb',
   user : 'sys',
   password: 'manager',
   minpoolsize: 2,

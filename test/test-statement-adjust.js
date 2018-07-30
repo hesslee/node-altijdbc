@@ -10,7 +10,7 @@ if (!jinst.isJvmCreated()) {
 }
 
 var altidb = new JDBC({
-  url: 'jdbc:Altibase://mmj:20999/mydb',
+  url: 'jdbc:Altibase://testserver:20999/mydb',
   user: 'sys',
   password: 'manager'
 });
