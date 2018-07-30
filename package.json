@@ -1,5 +1,5 @@
 {
-  "name": "jdbc",
+  "name": "altijdbc",
   "version": "0.6.4-pre.0",
   "description": "Node Module Altibase JDBC wrapper",
   "main": "index.js",
