@@ -291,9 +291,9 @@ var config = {
 //   }
 // };
 
-var hsqldb = new JDBC(config);
+var altidb = new JDBC(config);
 
-hsqldb.initialize(function(err) {
+altidb.initialize(function(err) {
   if (err) {
     console.log(err);
   }
@@ -306,7 +306,7 @@ hsqldb.initialize(function(err) {
 // For series execution.
 var asyncjs = require('async');
 
-hsqldb.reserve(function(err, connObj) {
+altidb.reserve(function(err, connObj) {
   // The connection returned from the pool is an object with two fields
   // {uuid: <uuid>, conn: <Connection>}
   if (connObj) {
@@ -460,7 +460,7 @@ hsqldb.reserve(function(err, connObj) {
     ], function(err, results) {
       // Results can also be processed here.
       // Release the connection back to the pool.
-      hsqldb.release(connObj, function(err) {
+      altidb.release(connObj, function(err) {
         if (err) {
           console.log(err.message);
         }
