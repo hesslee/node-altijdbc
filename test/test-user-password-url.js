@@ -4,14 +4,12 @@ var JDBC = require('../lib/jdbc');
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar',
+                        './drivers/Altibase6_5.jar']);
 }
 
 var config = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb;user=SA;password='
+  url: 'jdbc:Altibase://mmj:20999/mydb?user=sys&password=manager'
 };
 
 var hsqldb = new JDBC(config);
@@ -49,7 +47,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("CREATE TABLE blah (id int, name varchar(10), date DATE, time TIME, timestamp TIMESTAMP);", function(err, result) {
+        statement.executeUpdate("CREATE TABLE blah (id INT, name VARCHAR(10), date DATE);", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.equal(0, result);
@@ -63,7 +61,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP);", function(err, result) {
+        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', SYSDATE);", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.equal(1, result);
@@ -92,15 +90,13 @@ module.exports = {
         console.log(err);
       } else {
         statement.executeQuery("SELECT * FROM blah;", function(err, resultset) {
-          test.expect(7);
+          test.expect(5);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObjArray(function(err, results) {
             test.equal(results.length, 1);
             test.equal(results[0].NAME, 'Jason');
             test.ok(results[0].DATE);
-            test.ok(results[0].TIME);
-            test.ok(results[0].TIMESTAMP);
             test.done();
           });
         });

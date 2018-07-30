@@ -4,30 +4,30 @@ var JDBC = require('../lib/jdbc');
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar',
+                        './drivers/Altibase6_5.jar']);
 }
 
-var configWithUserInUrl = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb;user=SA;password='
+var config = {
+//drivername: 'Altibase.jdbc.driver.AltibaseDriver',
+  url: 'jdbc:Altibase_7.1.6://mmj:20999/mydb?user=sys&password=manager'
 };
 
-var configderby = {
-  url: 'jdbc:derby://localhost:1527/testdb'
+var config6 = {
+  drivername: 'Altibase6_5.jdbc.driver.AltibaseDriver',
+  url: 'jdbc:Altibase_7.1.3://mmj:20651/mydb?user=sys&password=manager'
 };
 
-var hsqldb = new JDBC(configWithUserInUrl);
-var derby = new JDBC(configderby);
-var hsqldbconn = null;
-var derbyconn = null;
+var altidb7 = new JDBC(config);
+var altidb6 = new JDBC(config6);
+var altidb7conn = null;
+var altidb6conn = null;
 
-exports.hsqldb = {
+exports.altidb7 = {
   setUp: function(callback) {
-    if (hsqldbconn === null && hsqldb._pool.length > 0) {
-      hsqldb.reserve(function(err, conn) {
-        hsqldbconn = conn;
+    if (altidb7conn === null && altidb7._pool.length > 0) {
+      altidb7.reserve(function(err, conn) {
+        altidb7conn = conn;
         callback();
       });
     } else {
@@ -35,8 +35,8 @@ exports.hsqldb = {
     }
   },
   tearDown: function(callback) {
-    if (hsqldbconn) {
-      hsqldb.release(hsqldbconn, function(err) {
+    if (altidb7conn) {
+      altidb7.release(altidb7conn, function(err) {
         callback();
       });
     } else {
@@ -44,18 +44,18 @@ exports.hsqldb = {
     }
   },
   testinitialize: function(test) {
-    hsqldb.initialize(function(err) {
+    altidb7.initialize(function(err) {
       test.expect(1);
       test.equal(null, err);
       test.done();
     });
   },
   testcreatetable: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("CREATE TABLE blah (id int, name varchar(10), date DATE, time TIME, timestamp TIMESTAMP);", function(err, result) {
+        statement.executeUpdate("CREATE TABLE blah (id INT, name VARCHAR(10), date DATE);", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.equal(0, result);
@@ -65,11 +65,11 @@ exports.hsqldb = {
     });
   },
   testinsert: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP);", function(err, result) {
+        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', SYSDATE);", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.equal(1, result);
@@ -79,7 +79,7 @@ exports.hsqldb = {
     });
   },
   testupdate: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
@@ -93,20 +93,18 @@ exports.hsqldb = {
     });
   },
   testselect: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
         statement.executeQuery("SELECT * FROM blah;", function(err, resultset) {
-          test.expect(7);
+          test.expect(5);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObjArray(function(err, results) {
             test.equal(results.length, 1);
             test.equal(results[0].NAME, 'Jason');
             test.ok(results[0].DATE);
-            test.ok(results[0].TIME);
-            test.ok(results[0].TIMESTAMP);
             test.done();
           });
         });
@@ -114,20 +112,18 @@ exports.hsqldb = {
     });
   },
   testselectbyexecute: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
         statement.execute("SELECT * FROM blah;", function(err, resultset) {
-          test.expect(7);
+          test.expect(5);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObjArray(function(err, results) {
             test.equal(results.length, 1);
             test.equal(results[0].NAME, 'Jason');
             test.ok(results[0].DATE);
-            test.ok(results[0].TIME);
-            test.ok(results[0].TIMESTAMP);
             test.done();
           });
         });
@@ -135,7 +131,7 @@ exports.hsqldb = {
     });
   },
   testupdatebyexecute: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
@@ -149,7 +145,7 @@ exports.hsqldb = {
     });
   },
   testdelete: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
@@ -163,7 +159,7 @@ exports.hsqldb = {
     });
   },
   testdroptable: function(test) {
-    hsqldbconn.conn.createStatement(function(err, statement) {
+    altidb7conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
@@ -178,11 +174,11 @@ exports.hsqldb = {
   },
 };
 
-exports.derby = {
+exports.altidb6 = {
   setUp: function(callback) {
-    if (derbyconn === null && derby._pool.length > 0) {
-      derby.reserve(function(err, conn) {
-        derbyconn = conn;
+    if (altidb6conn === null && altidb6._pool.length > 0) {
+      altidb6.reserve(function(err, conn) {
+        altidb6conn = conn;
         callback();
       });
     } else {
@@ -190,8 +186,8 @@ exports.derby = {
     }
   },
   tearDown: function(callback) {
-    if (derbyconn) {
-      derby.release(derbyconn, function(err) {
+    if (altidb6conn) {
+      altidb6.release(altidb6conn, function(err) {
         callback();
       });
     } else {
@@ -199,18 +195,18 @@ exports.derby = {
     }
   },
   testinitialize: function(test) {
-    derby.initialize(function(err) {
+    altidb6.initialize(function(err) {
       test.expect(1);
       test.equal(null, err);
       test.done();
     });
   },
   testcreatetable: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("CREATE TABLE blah (id int, name varchar(10), date DATE, time TIME, timestamp TIMESTAMP)", function(err, result) {
+        statement.executeUpdate("CREATE TABLE blah (id INT, name VARCHAR(10), date DATE)", function(err, result) {
           test.expect(1);
           test.equal(null, err);
           test.done();
@@ -219,11 +215,11 @@ exports.derby = {
     });
   },
   testinsert: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP)", function(err, result) {
+        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', SYSDATE)", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.ok(result && result == 1);
@@ -233,7 +229,7 @@ exports.derby = {
     });
   },
   testupdate: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
@@ -247,20 +243,18 @@ exports.derby = {
     });
   },
   testselect: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
         statement.executeQuery("SELECT * FROM blah", function(err, resultset) {
-          test.expect(7);
+          test.expect(5);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObjArray(function(err, results) {
             test.equal(results.length, 1);
             test.equal(results[0].NAME, 'Jason');
             test.ok(results[0].DATE);
-            test.ok(results[0].TIME);
-            test.ok(results[0].TIMESTAMP);
             test.done();
           });
         });
@@ -268,27 +262,23 @@ exports.derby = {
     });
   },
   testselectobject: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
         statement.executeQuery("SELECT * FROM blah", function(err, resultset) {
-          test.expect(13);
+          test.expect(9);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObject(function(err, results) {
             test.equal(results.rows.length, 1);
             test.equal(results.rows[0].NAME, 'Jason');
             test.ok(results.rows[0].DATE);
-            test.ok(results.rows[0].TIME);
-            test.ok(results.rows[0].TIMESTAMP);
 
-            test.equal(results.labels.length, 5);
+            test.equal(results.labels.length, 3);
             test.equal(results.labels[0], 'ID');
             test.equal(results.labels[1], 'NAME');
             test.ok(results.labels[2], 'DATE');
-            test.ok(results.labels[3], 'TIME');
-            test.ok(results.labels[4], 'TIMESTAMP');
 
             test.done();
           });
@@ -297,22 +287,20 @@ exports.derby = {
     });
   },
   testselectzero: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
         statement.executeQuery("SELECT * FROM blah WHERE id = 1000", function(err, resultset) {
-          test.expect(9);
+          test.expect(7);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObject(function(err, results) {
             test.equal(results.rows.length, 0);
-            test.equal(results.labels.length, 5);
+            test.equal(results.labels.length, 3);
             test.equal(results.labels[0], 'ID');
             test.equal(results.labels[1], 'NAME');
             test.ok(results.labels[2], 'DATE');
-            test.ok(results.labels[3], 'TIME');
-            test.ok(results.labels[4], 'TIMESTAMP');
             test.done();
           });
         });
@@ -320,7 +308,7 @@ exports.derby = {
     });
   },
   testdelete: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {
@@ -334,7 +322,7 @@ exports.derby = {
     });
   },
   testdroptable: function(test) {
-    derbyconn.conn.createStatement(function(err, statement) {
+    altidb6conn.conn.createStatement(function(err, statement) {
       if (err) {
         console.log(err);
       } else {

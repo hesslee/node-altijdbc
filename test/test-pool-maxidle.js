@@ -1,7 +1,6 @@
 var _ = require('lodash');
 var asyncjs = require('async');
 var nodeunit = require('nodeunit');
-var lolex = require("lolex");
 var jinst = require('../lib/jinst');
 var Pool = require('../lib/pool');
 var java = jinst.getInstance();
@@ -12,33 +11,33 @@ var lolex = require("lolex");
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar',
+                        './drivers/Altibase6_5.jar']);
 }
 
+java.newInstance('Altibase.jdbc.driver.AltibaseDriver', function(err, driver) {});
+
 var config = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb',
-  user : 'SA',
-  password: '',
+  url: 'jdbc:Altibase://mmj:20999/mydb',
+  user : 'sys',
+  password: 'manager',
   minpoolsize: 1,
   maxpoolsize: 1
 };
 
 var configWithMaxIdle = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb',
-  user : 'SA',
-  password: '',
+  url: 'jdbc:Altibase://mmj:20999/mydb',
+  user : 'sys',
+  password: 'manager',
   minpoolsize: 1,
   maxpoolsize: 1,
   maxidle: 20*60*1000 //20 minutes
 };
 
 var configWithMaxIdleAndKeepAlive = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb',
-  user : 'SA',
-  password: '',
+  url: 'jdbc:Altibase://mmj:20999/mydb',
+  user : 'sys',
+  password: 'manager',
   minpoolsize: 1,
   maxpoolsize: 1,
   maxidle: 20*60*1000,

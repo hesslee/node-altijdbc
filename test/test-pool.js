@@ -7,16 +7,14 @@ var java = jinst.getInstance();
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar',
+                        './drivers/Altibase6_5.jar']);
 }
 
 var config = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb',
-  user : 'SA',
-  password: '',
+  url: 'jdbc:Altibase://mmj:20999/mydb',
+  user : 'sys',
+  password: 'manager',
   minpoolsize: 2,
   maxpoolsize: 3
 };

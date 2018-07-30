@@ -4,23 +4,25 @@ var JDBC = require('../lib/jdbc');
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar',
+                        './drivers/Altibase6_5.jar']);
 }
 
-var derby = new JDBC({
-  url: 'jdbc:derby://localhost:1527/testdb;create=true'
-});
+var config = {
+  url: 'jdbc:Altibase://mmj:20999/mydb',
+  user: 'sys',
+  password: 'manager',
+  minpoolsize: 10
+};
 
+var altidb = new JDBC(config);
 var testconn = null;
 var testDate = Date.now();
 
 module.exports = {
   setUp: function(callback) {
-    if (testconn === null && derby._pool.length > 0) {
-      derby.reserve(function(err, conn) {
+    if (testconn === null && altidb._pool.length > 0) {
+      altidb.reserve(function(err, conn) {
         testconn = conn;
         callback();
       });
@@ -30,7 +32,7 @@ module.exports = {
   },
   tearDown: function(callback) {
     if (testconn) {
-      derby.release(testconn, function(err) {
+      altidb.release(testconn, function(err) {
         callback();
       });
     } else {
@@ -38,9 +40,9 @@ module.exports = {
     }
   },
   testinitialize: function(test) {
-    derby.initialize(function(err) {
+    altidb.initialize(function(err) {
       test.expect(1);
-      test.equal(err, null);
+      test.equal(null, err);
       test.done();
     });
   },
@@ -49,12 +51,17 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        var create = "CREATE TABLE blah ";
-        create += "(id int, bi bigint, name varchar(10), date DATE, time TIME, timestamp TIMESTAMP)";
-        statement.executeUpdate(create, function(err, result) {
-          test.expect(1);
+        statement.executeUpdate("CREATE TABLE blah (id INT, name VARCHAR(10), date DATE, time DATE, timestamp DATE);", function(err, result) {
+          test.expect(2);
           test.equal(null, err);
-          test.done();
+          test.equal(0, result);
+          statement.close(function(err) {
+            if (err) {
+              console.log(err);
+            } else {
+              test.done();
+            }
+          });
         });
       }
     });
@@ -64,9 +71,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        var insert = "INSERT INTO blah VALUES ";
-        insert += "(1, 9223372036854775807, 'Jason', CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP)";
-        statement.executeUpdate(insert, function(err, result) {
+        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', SYSDATE, SYSDATE, SYSDATE);", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.ok(result && result == 1);
@@ -80,7 +85,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("UPDATE blah SET id = 2 WHERE name = 'Jason'", function(err, result) {
+        statement.executeUpdate("UPDATE blah SET id = 2 WHERE name = 'Jason';", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.ok(result && result == 1);
@@ -94,17 +99,14 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeQuery("SELECT * FROM blah", function(err, resultset) {
-          test.expect(8);
+        statement.executeQuery("SELECT * FROM blah;", function(err, resultset) {
+          test.expect(5);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObjArray(function(err, results) {
             test.equal(results.length, 1);
-            test.equal(results[0].BI, '9223372036854775807');
             test.equal(results[0].NAME, 'Jason');
             test.ok(results[0].DATE);
-            test.ok(results[0].TIME);
-            test.ok(results[0].TIMESTAMP);
             test.done();
           });
         });
@@ -116,7 +118,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.setInt(1, 2, function(err) {
+        statement.setInt(1,2, function(err) {
           if (err) {
             console.log(err);
           }
@@ -169,14 +171,15 @@ module.exports = {
         statement.setDate(1, sqlDate, null, function(err) {
           if (err) {
             console.log(err);
-          } else {
+          }
+          else {
             statement.executeUpdate(function(err, numrows) {
               if (err) {
                 console.log(err);
               } else {
                 test.expect(2);
                 test.equal(null, err);
-                test.equal(1, numrows);
+                test.equal(1,numrows);
                 test.done();
               }
             });
@@ -285,10 +288,23 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("DELETE FROM blah WHERE id = 2", function(err, result) {
+        statement.executeUpdate("DELETE FROM blah WHERE id = 2;", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.ok(result && result == 1);
+          test.done();
+        });
+      }
+    });
+  },
+  testcancel: function (test) {
+    testconn.conn.createStatement(function (err, statement) {
+      if (err) {
+        console.log(err);
+      } else {
+        statement.cancel(function(err) {
+          test.expect(1);
+          test.equal(null, err);
           test.done();
         });
       }
@@ -299,9 +315,10 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("DROP TABLE blah", function(err, result) {
-          test.expect(1);
+        statement.executeUpdate("DROP TABLE blah;", function(err, result) {
+          test.expect(2);
           test.equal(null, err);
+          test.equal(0, result);
           test.done();
         });
       }

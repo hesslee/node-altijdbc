@@ -4,23 +4,23 @@ var JDBC = require('../lib/jdbc');
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar',
+                        './drivers/Altibase6_5.jar']);
 }
 
 var config = {
-  url: 'jdbc:derby://localhost:1527/testdb;create=true',
+  url: 'jdbc:Altibase://mmj:20999/mydb',
+  user: 'sys',
+  password: 'manager'
 };
 
-var derby = new JDBC(config);
+var altidb = new JDBC(config);
 var testconn = null;
 
 module.exports = {
   setUp: function(callback) {
-    if (testconn === null && derby._pool.length > 0) {
-      derby.reserve(function(err, conn) {
+    if (testconn === null && altidb._pool.length > 0) {
+      altidb.reserve(function(err, conn) {
         testconn = conn;
         testconn.conn.setAutoCommit(false, function(err) {
           callback();
@@ -32,7 +32,7 @@ module.exports = {
   },
   tearDown: function(callback) {
     if (testconn) {
-      derby.release(testconn, function(err) {
+      altidb.release(testconn, function(err) {
         callback();
       });
     } else {
@@ -40,7 +40,7 @@ module.exports = {
     }
   },
   testinitialize: function(test) {
-    derby.initialize(function(err) {
+    altidb.initialize(function(err) {
       test.expect(1);
       test.equal(null, err);
       test.done();
@@ -51,7 +51,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("CREATE TABLE blah (id int, name varchar(10), date DATE, time TIME, timestamp TIMESTAMP)", function(err, result) {
+        statement.executeUpdate("CREATE TABLE blah (id INT, name VARCHAR(10), date DATE)", function(err, result) {
           test.expect(1);
           test.equal(null, err);
           test.done();
@@ -64,7 +64,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', CURRENT_DATE, CURRENT_TIME, CURRENT_TIMESTAMP)", function(err, result) {
+        statement.executeUpdate("INSERT INTO blah VALUES (1, 'Jason', SYSDATE)", function(err, result) {
           test.expect(2);
           test.equal(null, err);
           test.ok(result && result == 1);
@@ -95,15 +95,13 @@ module.exports = {
         console.log(err);
       } else {
         statement.executeQuery("SELECT * FROM blah", function(err, resultset) {
-          test.expect(7);
+          test.expect(5);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObjArray(function(err, results) {
             test.equal(results.length, 1);
             test.equal(results[0].NAME, 'Jason');
             test.ok(results[0].DATE);
-            test.ok(results[0].TIME);
-            test.ok(results[0].TIMESTAMP);
             test.done();
           });
         });
@@ -131,15 +129,13 @@ module.exports = {
         console.log(err);
       } else {
         statement.executeQuery("SELECT * FROM blah", function(err, resultset) {
-          test.expect(7);
+          test.expect(5);
           test.equal(null, err);
           test.ok(resultset);
           resultset.toObjArray(function(err, results) {
             test.equal(results.length, 1);
             test.equal(results[0].NAME, 'Jason');
             test.ok(results[0].DATE);
-            test.ok(results[0].TIME);
-            test.ok(results[0].TIMESTAMP);
             test.done();
           });
         });

@@ -7,17 +7,17 @@ var java = jinst.getInstance();
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar',
+                        './drivers/Altibase6_5.jar']);
 }
 
 var config = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb',
-  user : 'SA',
-  password: ''
+  url: 'jdbc:Altibase://mmj:20999/mydb',
+  user : 'sys',
+  password: 'manager'
 };
+
+java.newInstance('Altibase.jdbc.driver.AltibaseDriver', function(err, driver) {});
 
 var testconn = null;
 
@@ -124,7 +124,7 @@ module.exports = {
     });
   },
   testcreatestatement1: function(test) {
-    testconn.createStatement(0, 0, function(err, statement) {
+    testconn.createStatement(1003, 1007, function(err, statement) {
       test.expect(2);
       test.equal(null, err);
       test.ok(statement);
@@ -132,7 +132,7 @@ module.exports = {
     });
   },
   testcreatestatement2: function(test) {
-    testconn.createStatement(0, 0, 0, function(err, statement) {
+    testconn.createStatement(1003, 1007, 2, function(err, statement) {
       test.expect(2);
       test.equal(null, err);
       test.ok(statement);
@@ -166,8 +166,8 @@ module.exports = {
   testgetclientinfo: function(test) {
     testconn.getClientInfo(function(err, props) {
       test.expect(2);
-      test.equal(null, err);
-      test.equal(null, props);
+      test.ok(err);
+      test.equal("NOT SUPPORTED", err.message);
       test.done();
     });
   },
@@ -175,7 +175,7 @@ module.exports = {
     testconn.getHoldability(function(err, holdability) {
       test.expect(2);
       test.equal(null, err);
-      test.equal(null, holdability);
+      test.equal(2, holdability);
       test.done();
     });
   },
@@ -190,16 +190,16 @@ module.exports = {
   testgetnetworktimeout: function(test) {
     testconn.getNetworkTimeout(function(err, ms) {
       test.expect(2);
-      test.equal(null, err);
-      test.equal(0, ms);
+      test.ok(err);
+      test.equal("NOT SUPPORTED", err.message);
       test.done();
     });
   },
   testgetschema: function(test) {
     testconn.getSchema(function(err, schema) {
       test.expect(2);
-      test.equal(null, err);
-      test.ok(schema);
+      test.ok(err);
+      test.equal("NOT SUPPORTED", err.message);
       test.done();
     });
   },
@@ -247,8 +247,8 @@ module.exports = {
   testisvalid: function(test) {
     testconn.isValid(0, function(err, valid) {
       test.expect(2);
-      test.equal(null, err);
-      test.ok(valid);
+      test.ok(err);
+      test.equal("NOT SUPPORTED", err.message);
       test.done();
     });
   },
@@ -261,7 +261,7 @@ module.exports = {
     });
   },
   testpreparecallsql: function(test) {
-    testconn.prepareCall("{ call database() }", function(err, callablestatement) {
+    testconn.prepareCall("{ call print('1') }", function(err, callablestatement) {
       test.expect(2);
       test.equal(null, err);
       test.ok(callablestatement);
@@ -269,7 +269,7 @@ module.exports = {
     });
   },
   testpreparestatement: function(test) {
-    testconn.prepareCall("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS;", function(err, preparedstatement) {
+    testconn.prepareCall("SELECT 1 FROM SYSTEM_.SYS_USERS_;", function(err, preparedstatement) {
       test.expect(2);
       if (err) {
         console.log(err);
@@ -400,8 +400,9 @@ module.exports = {
   },
   testsetschema: function(test) {
     testconn.setSchema('PUBLIC', function(err) {
-      test.expect(1);
-      test.equal(null, err);
+      test.expect(2);
+      test.ok(err);
+      test.equal("NOT SUPPORTED", err.message);
       test.done();
     });
   },
