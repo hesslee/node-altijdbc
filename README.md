@@ -1,17 +1,14 @@
-# node-jdbc
-JDBC API Wrapper for node.js
+# altijdbc
+Altibase JDBC API Wrapper for node.js
 
 ## Latest Version
 - **0.6.2**
 
 ## Installation
-- Release: ```npm i --save jdbc```
-- Development: ```npm i --save jdbc@next``` (this will install code from the master branch).
+- Release: ```npm i --save altijdbc```
+- Development: ```npm i --save altijdbc@next``` (this will install code from the master branch).
 
-Please visit [node-jdbc](https://www.npmjs.org/package/jdbc) for information on installing with npm.
-
-## Status
-[![Build Status](https://travis-ci.org/CraZySacX/node-jdbc.svg?branch=master)](https://travis-ci.org/CraZySacX/node-jdbc)
+Please visit [altijdbc](https://www.npmjs.org/package/altijdbc) for information on installing with npm.
 
 ## Supported Java Versions
 - 1.7
@@ -31,11 +28,11 @@ new Java 9 API changes (if any).
 and classpath setup have to happen before the first java call.  I've created a
 small wrapper (jinst.js) to help out with this.  See below for example
 usage.  I usually add this to every file that may be an entry point.  The
-[unit tests](https://github.com/CraZySacX/node-jdbc/tree/master/test)
+[unit tests](https://github.com/ALTIBASE/altijdbc/tree/master/test)
 are setup like this due to the fact that order can't be guaranteed.
 
 ```javascript
-var jinst = require('jdbc/lib/jinst');
+var jinst = require('altijdbc/lib/jinst');
 
 // isJvmCreated will be true after the first java call.  When this happens, the
 // options and classpath cannot be adjusted.
@@ -45,10 +42,7 @@ if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
   // Add all jar files required by your project here.  You get one chance to
   // setup the classpath before the first java call.
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar']);
 }
 ```
 
@@ -75,15 +69,12 @@ var Pool = require('../lib/pool');
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar']);
 }
 
 var config = {
-  url: 'jdbc:hsqldb:hsql://localhost/xdb',
-  user : 'SA',
+  url: 'jdbc:Altibase://localhost:20300/mydb',
+  user : 'sys',
   password: '',
   minpoolsize: 2,
   maxpoolsize: 3
@@ -196,7 +187,7 @@ module.exports = {
 - **Fully Wrapped Connection API**
 
 The Java Connection API has almost been completely wrapped.  See
-[connection.js](https://github.com/CraZySacX/node-jdbc/blob/master/lib/connection.js)
+[connection.js](https://github.com/ALTIBASE/altijdbc/blob/master/lib/connection.js)
 for a full list of functions.
 
 ```javascript
@@ -246,29 +237,21 @@ conn.createStatement(function(err, statement) {
 If you pass a **maxidle** property in the config for a new connection pool,
 `pool.reserve()` will close stale connections, and will return a sufficiently fresh connection, or a new connection.  **maxidle** can be number representing the maximum number of milliseconds since a connection was last used, that a connection is still considered alive (without making an extra call to the database to check that the connection is valid).  If **maxidle** is a falsy value or is absent from the config, this feature does not come into effect.  This feature is useful, when connections are automatically closed from the server side after a certain period of time, and when it is not appropriate to use the connection keepalive feature.
 
-## Usage
-Some mininal examples are given below.  I've also created a
-[node-example-jdbc](https://github.com/CraZySacX/node-jdbc-example) project with more thorough examples.
-
 ### Initialize
 ```javascript
-var JDBC = require('jdbc');
-var jinst = require('jdbc/lib/jinst');
+var JDBC = require('altijdbc');
+var jinst = require('altijdbc/lib/jinst');
 
 if (!jinst.isJvmCreated()) {
   jinst.addOption("-Xrs");
-  jinst.setupClasspath(['./drivers/hsqldb.jar',
-                        './drivers/derby.jar',
-                        './drivers/derbyclient.jar',
-                        './drivers/derbytools.jar']);
+  jinst.setupClasspath(['./drivers/Altibase.jar']);
 }
 
 var config = {
   // Required
-  url: 'jdbc:hsqldb:hsql://localhost/xdb',
+  url: 'jdbc:Altibase://localhost:20300/mydb',
 
   // Optional
-  drivername: 'my.jdbc.DriverName',
   minpoolsize: 10,
   maxpoolsize: 100,
 
@@ -277,7 +260,7 @@ var config = {
   // means that if your driver doesn't support the 'user' and 'password'
   // properties this will not work.  You will have to supply the appropriate
   // values in the properties object instead.
-  user: 'SA',
+  user: 'sys',
   password: '',
   properties: {}
 };
@@ -285,10 +268,9 @@ var config = {
 // or user/password in url
 // var config = {
 //   // Required
-//   url: 'jdbc:hsqldb:hsql://localhost/xdb;user=SA;password=',
+//   url: 'jdbc:Altibase://localhost:20300/mydb?user=sys&password=',
 //
 //   // Optional
-//   drivername: 'my.jdbc.DriverName',
 //   minpoolsize: 10
 //   maxpoolsize: 100,
 //   properties: {}
@@ -297,14 +279,13 @@ var config = {
 // or user/password in properties
 // var config = {
 //   // Required
-//   url: 'jdbc:hsqldb:hsql://localhost/xdb',
+//   url: 'jdbc:Altibase://localhost:20300/mydb',
 //
 //   // Optional
-//   drivername: 'my.jdbc.DriverName',
 //   minpoolsize: 10,
 //   maxpoolsize: 100,
 //   properties: {
-//     user: 'SA',
+//     user: 'sys',
 //     password: ''
 //     // Other driver supported properties can be added here as well.
 //   }
@@ -368,8 +349,7 @@ hsqldb.reserve(function(err, connObj) {
             callback(err);
           } else {
             statement.executeUpdate("CREATE TABLE blah "
-                                  + "(id int, name varchar(10), date DATE, "
-                                  + " time TIME, timestamp TIMESTAMP);",
+                                  + "(id INT, name VARCHAR(10), date DATE);",
                                   function(err, count) {
               if (err) {
                 callback(err);
@@ -386,8 +366,7 @@ hsqldb.reserve(function(err, connObj) {
             callback(err);
           } else {
             statement.executeUpdate("INSERT INTO blah "
-                                  + "VALUES (1, 'Jason', CURRENT_DATE, "
-                                  + "CURRENT_TIME, CURRENT_TIMESTAMP);",
+                                  + "VALUES (1, 'Jason', SYSDATE);",
                                   function(err, count) {
               if (err) {
                 callback(err);

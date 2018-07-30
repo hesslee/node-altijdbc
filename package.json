@@ -1,7 +1,7 @@
 {
   "name": "jdbc",
   "version": "0.6.4-pre.0",
-  "description": "Node Module JDBC wrapper",
+  "description": "Node Module Altibase JDBC wrapper",
   "main": "index.js",
   "dependencies": {
     "async": "~2.6.0",
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/CraZySacX/node-jdbc.git"
+    "url": "git://github.com/ALTIBASE/altijdbc.git"
   },
   "directories": {
     "doc": ".",
@@ -38,7 +38,7 @@
   "engines": {
     "node": ">=0.10"
   },
-  "author": "Jason Ozias <jason.g.ozias@gmail.com>",
+  "author": "Altibase <support@altibase.com>",
   "license": "MIT",
   "readmeFilename": "README.md"
 }
