@@ -208,7 +208,7 @@ module.exports = {
       test.expect(3);
       test.equal(null, err);
       test.ok(txniso);
-      test.equal(txniso, "TRANSACTION_READ_COMMITTED");
+      test.equal(txniso, Connection.TRANSACTION_READ_COMMITTED);
       test.done();
     });
   },
@@ -347,7 +347,7 @@ module.exports = {
     });
   },
   testsetholdability: function(test) {
-    var hold = (new ResultSet(null))._holdability.indexOf('HOLD_CURSORS_OVER_COMMIT');
+    var hold = ResultSet.HOLD_CURSORS_OVER_COMMIT;
     testconn.setHoldability(hold, function(err){
       test.expect(1);
       if (err) { console.log(err); }
@@ -407,7 +407,7 @@ module.exports = {
     });
   },
   testsettransactionisolation: function(test) {
-    var txniso = testconn._txniso.indexOf('TRANSACTION_SERIALIZABLE');
+    var txniso = Connection.TRANSACTION_SERIALIZABLE;
     testconn.setTransactionIsolation(txniso, function(err) {
       test.expect(1);
       test.equal(null, err);
