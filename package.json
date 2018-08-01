@@ -1,7 +1,7 @@
 {
   "name": "altijdbc",
-  "version": "0.6.4-pre.0",
-  "description": "Node Module Altibase JDBC wrapper",
+  "version": "1.0.1",
+  "description": "Altibase JDBC wrapper for Node.js",
   "main": "index.js",
   "dependencies": {
     "async": "~2.6.0",
@@ -31,6 +31,7 @@
     "lib": "lib"
   },
   "keywords": [
+    "altibase",
     "node",
     "jdbc",
     "wrapper"

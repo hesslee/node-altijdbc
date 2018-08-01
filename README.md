@@ -1,8 +1,8 @@
 # altijdbc
-Altibase JDBC API Wrapper for node.js
+Altibase JDBC wrapper for Node.js
 
 ## Latest Version
-- **0.6.2**
+- **1.0.1**
 
 ## Installation
 - Release: ```npm i --save altijdbc```
