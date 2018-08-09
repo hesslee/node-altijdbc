@@ -1,6 +1,6 @@
 {
   "name": "altijdbc",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Altibase JDBC wrapper for Node.js",
   "main": "index.js",
   "dependencies": {
