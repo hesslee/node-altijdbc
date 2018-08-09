@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/ALTIBASE/altijdbc.svg?branch=master)](https://travis-ci.com/ALTIBASE/altijdbc)
+[![Build Status](https://travis-ci.org/ALTIBASE/altijdbc.svg?branch=master)](https://travis-ci.org/ALTIBASE/altijdbc)
 
 # altijdbc
 Altibase JDBC wrapper for Node.js
