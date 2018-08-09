@@ -17,9 +17,7 @@
     "q": "^1.5.1"
   },
   "scripts": {
-    "pretest": "bash bin/startdbs",
     "test": "nodeunit test",
-    "posttest": "bash bin/stopdbs",
     "lint": "jshint lib/**.js test/**.js"
   },
   "repository": {
