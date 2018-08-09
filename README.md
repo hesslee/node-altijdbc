@@ -4,7 +4,7 @@
 Altibase JDBC wrapper for Node.js
 
 ## Latest Version
-- **1.0.1**
+- **1.0.3**
 
 ## Installation
 - Release: ```npm i --save altijdbc```
