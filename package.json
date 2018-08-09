@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ALTIBASE/altijdbc.git"
+    "url": "git://github.com/ALTIBASE/node-altijdbc.git"
   },
   "directories": {
     "doc": ".",
