@@ -10,12 +10,12 @@ if (!jinst.isJvmCreated()) {
 
 var config = {
   drivername: 'Altibase.jdbc.driver.AltibaseDriver',
-  url: 'jdbc:Altibase_7.1.6://testserver:20999/mydb?user=sys&password=manager'
+  url: 'jdbc:Altibase_7.1.6://testserver:20300/mydb?user=sys&password=manager'
 };
 
 var config6 = {
   drivername: 'Altibase6_5.jdbc.driver.AltibaseDriver',
-  url: 'jdbc:Altibase_7.1.3://testserver:20651/mydb?user=sys&password=manager'
+  url: 'jdbc:Altibase_7.1.3://testserver:20300/mydb?user=sys&password=manager'
 };
 
 var altidb7 = new JDBC(config);
