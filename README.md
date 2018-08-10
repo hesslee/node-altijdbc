@@ -30,7 +30,7 @@ Unittest using nodeunit
 - https://github.com/ALTIBASE/node-altijdbc source code clone or download
 - change to source directory
 - ```npm i```  (All dependencies including devDependencies are installed according to package.json file.)
-- ```./node_modules/nodeunit/bin/nodeunit test``` (nodeunit program executes unittest programs in the test directory.)
+- ```npm test``` (npm runs test program according to scripts/test specification of package.json file. Currently, nodeunit program executes unittest programs in the test directory.)
 
 ## Major API Refactor
 
