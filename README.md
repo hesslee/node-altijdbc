@@ -8,7 +8,6 @@ Altibase JDBC wrapper for Node.js
 
 ## Installation
 - Release: ```npm i --save altijdbc```
-- Development: ```npm i --save altijdbc@next``` (this will install code from the master branch).
 
 Please visit [altijdbc](https://www.npmjs.org/package/altijdbc) for information on installing with npm.
 
@@ -21,6 +20,17 @@ compile it with such.  All the tests work out of the box on a 1.8 JVM, but I've 
 
 Note that Java 9 is not currently supported.  When node-java supports Java 9, I will look into implementing any
 new Java 9 API changes (if any).
+
+## Unittest
+Test environment
+- Node.js version : v8.11.3
+- Altibase version : v7.1 (connection: testserver:20300/mydb?user=sys&password=manager)
+
+Unittest using nodeunit
+- https://github.com/ALTIBASE/node-altijdbc source code clone or download
+- change to source directory
+- ```npm i```  (All dependencies including devDependencies are installed according to package.json file.)
+- ```./node_modules/nodeunit/bin/nodeunit test``` (nodeunit program executes unittest programs in the test directory.)
 
 ## Major API Refactor
 
